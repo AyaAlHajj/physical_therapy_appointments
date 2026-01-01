@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:physical_therapy_appointments/screens/home.dart';
 
+
 void main() {
   runApp(const MainApp());
 }
@@ -16,3 +17,4 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+
