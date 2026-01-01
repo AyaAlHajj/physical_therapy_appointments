@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/screens/home.dart';
 
 
 void main() {
@@ -12,7 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      
+      home: HomePage(),
     );
   }
 }
