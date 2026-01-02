@@ -34,7 +34,7 @@ class Therapist{
   factory Therapist.fromMap(Map<String, Object?> map) {
     return Therapist(
       id: map['id'] as int?,
-      firstname: map['name'] as String,
+      firstname: map['firstname'] as String,
       surname: map['surname'] as String,
       phone: map['phone'] as String,
       info: map['info'] as String,

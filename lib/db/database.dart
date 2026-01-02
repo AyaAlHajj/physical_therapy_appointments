@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 class TherapyDatabase{
   Future<Database> getDatabase() async {
     String dbPath = await getDatabasesPath();
+    //print('Database path: $dbPath/therapy.db');
     Database db = await openDatabase(
       join(dbPath, 'therapy.db'),
       onCreate: (db, version) async{ 
@@ -11,11 +12,11 @@ class TherapyDatabase{
           CREATE TABLE therapists(
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           firstname TEXT NOT NULL,
-          surname TEXT NOT NULL, 
-          phone TEXT, 
-          info TEXT, 
-          email TEXT NOT NULL UNIQUE, 
-          password TEXT NOT NULL, 
+          surname TEXT NOT NULL,
+          phone TEXT,
+          info TEXT,
+          email TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
           role TEXT NOT NULL
           )
         ''');

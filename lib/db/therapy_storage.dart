@@ -4,6 +4,95 @@ import 'package:physical_therapy_appointments/models/therapist.dart';
 import 'package:physical_therapy_appointments/models/therapist_slots.dart';
 import 'package:physical_therapy_appointments/models/wounded.dart';
 
+// --------------- User Login --------------------//
+Future<dynamic> loginUser(String email, String password) async {
+  TherapyDatabase database = TherapyDatabase();
+  final db = await database.getDatabase();
+
+  final allWounded = await db.query('wounded');
+  final allTherapists = await db.query('therapists');
+  print("DEBUG: Wounded in DB: $allWounded");
+  print("DEBUG: Therapists in DB: $allTherapists");
+
+  final woundedResult = await db.query(
+    'wounded',
+    where: 'email = ? AND password = ?',
+    whereArgs: [email, password],
+  );
+
+  if (woundedResult.isNotEmpty){
+    return Wounded.fromMap(woundedResult.first);
+  }
+
+  final therapistResult = await db.query(
+    'therapists',
+    where: 'email = ? AND password = ?',
+    whereArgs: [email, password],
+  );
+
+  if (therapistResult.isNotEmpty){
+    return Therapist.fromMap(therapistResult.first);
+  }
+
+  return null;
+}
+
+// --------------- Check User Existence --------------------//
+Future<bool> doesUserExist(String email) async {
+  TherapyDatabase database = TherapyDatabase();
+  final db = await database.getDatabase();
+  
+  final woundedResult = await db.query(
+    'wounded', 
+    where: 'email = ?', 
+    whereArgs: [email]);
+
+  final therapistResult = await db.query(
+    'therapists', 
+    where: 'email = ?', 
+    whereArgs: [email]);
+
+  return woundedResult.isNotEmpty || therapistResult.isNotEmpty;
+}
+
+
+// --------------- Sign Up --------------------//
+Future<String> signUP({
+  required String firstname,
+  required String surname,
+  required String email,
+  required String password,
+  String? phone,
+  String? info,
+  required String role,
+}) async {
+
+  if(await doesUserExist(email)){
+    return 'User with this email already exists.';
+  }
+
+  final db = await TherapyDatabase().getDatabase();
+  String table = (role == 'therapist') ? 'therapists' : 'wounded';
+
+  final Map<String, dynamic> data = {
+    'firstname': firstname,
+    'surname': surname,
+    'email': email,
+    'password': password,
+    'role': role,
+  };
+  
+  if (role == 'therapist') {
+    data['phone'] = phone;
+    data['info'] = info;
+  }
+  
+  await db.insert(table, data);
+  return 'success';
+}
+
+
+
 // ---------------Thrapist Table--------------------//
 Future<void> insertTherapist(Therapist therapist) async {
   TherapyDatabase database = TherapyDatabase();

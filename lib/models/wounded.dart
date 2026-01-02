@@ -28,11 +28,11 @@ class Wounded{
   factory Wounded.fromMap(Map<String, Object?> map) {
     return Wounded(
       id: map['id'] as int?,
-      firstname: map['name'] as String,
-      surname: map['surname'] as String,
-      email: map['email'] as String,
-      password: map['password'] as String,
-      role: map['role'] as String,
+      firstname: (map['firstname'] ?? '') as String,
+      surname: (map['surname'] ?? '') as String,
+      email: (map['email'] ?? '') as String,
+      password: (map['password'] ?? '') as String,
+      role: (map['role'] ?? '') as String,
     );
   }
 }
