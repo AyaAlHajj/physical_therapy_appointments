@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:physical_therapy_appointments/screens/wounded_dashboard.dart';
+import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
 import 'package:physical_therapy_appointments/screens/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -15,10 +15,11 @@ void main() async{
 
   final pref = await SharedPreferences.getInstance();
   String? savedUser = pref.getString('email');
+  int? savedUserId = pref.getInt('woundedId');
 
-  Widget startScreen = (savedUser == null) 
+  Widget startScreen = (savedUser == null || savedUserId == null) 
       ? const HomePage()
-      : const WondedDashboard();
+      : AppointmentListScreen(currentUserId: savedUserId);
 
   runApp(MainApp(startScreen: startScreen,));
 }
@@ -35,3 +36,4 @@ class MainApp extends StatelessWidget {
     );
   }
 }
+

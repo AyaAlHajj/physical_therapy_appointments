@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/dashboards/therapist_dashboard.dart';
 import 'package:physical_therapy_appointments/db/therapy_storage.dart';
-import 'package:physical_therapy_appointments/widgets/therapist_form.dart';
-import 'package:physical_therapy_appointments/widgets/wounded_form.dart';
+import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
+import 'package:physical_therapy_appointments/widgets/forms/therapist_form.dart';
+import 'package:physical_therapy_appointments/widgets/forms/wounded_form.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -96,7 +99,7 @@ class _SignUpState extends State<SignUp> {
               const SizedBox(height: 40),
 
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   if(!_checkEmptyFields()){
                     showDialog(
                       context: context, 
@@ -113,8 +116,8 @@ class _SignUpState extends State<SignUp> {
                     );
                     return;
                   }
-                  
-                  signUP(
+
+                  var result = await signUP(
                     firstname:  _firstNameController.text,
                     surname:  _surnameController.text,
                     email:  _emailController.text,
@@ -122,17 +125,38 @@ class _SignUpState extends State<SignUp> {
                     phone: selectedOption == 1 ? _phoneController.text : null,
                     info: selectedOption == 1 ? _infoController.text : null,
                     role: selectedOption == 1 ? 'therapist' : 'wounded',
-                  ).then((result) {
-                      if(result == 'success' && selectedOption == 2){
-                        Navigator.pop(context);
-                      Navigator.pushNamed(context, '/wounded_dashboard');
-                    }
+                  );
 
-                    else if(result == 'success' && selectedOption == 1){
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, '/therapist_dashboard');
+                  if(result is int){
+                    final pref = await SharedPreferences.getInstance();
+                    await pref.setBool('isLoggedIn', true);
+                    await pref.setString('email', _emailController.text);
+                    String role = selectedOption == 1 ? 'therapist' : 'wounded';
+                    await pref.setString('role', role);
+                    await pref.setInt('userId', result);
+
+                    if(selectedOption == 1){
+                      await pref.setInt('therapistId', result);
+                      await therapistSchedule(result);
+
+                      Navigator.push( 
+                        context, 
+                        MaterialPageRoute(
+                          builder: (ctx) =>  const TherapistDashboard(),
+                        )
+                      );
                     }
-                    
+                    else{
+                      await pref.setInt('woundedId', result);
+
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (ctx) => AppointmentListScreen(currentUserId: result),
+                        )
+                      );
+                    }
+                  }
                     else {
                         showDialog(
                           context: context, 
@@ -148,8 +172,7 @@ class _SignUpState extends State<SignUp> {
                         )
                       );
                     }
-                  });
-                
+                  
                 },
 
                 style: ElevatedButton.styleFrom(

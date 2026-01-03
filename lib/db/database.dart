@@ -47,13 +47,20 @@ class TherapyDatabase{
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           woundedId INTEGER NOT NULL,
           therapistId INTEGER NOT NULL,
-          date INT NOT NULL,
+          date INTEGER NOT NULL,
+          slotTime TEXT NOT NULL,
           FOREIGN KEY (woundedId) REFERENCES wounded (id), 
           FOREIGN KEY (therapistId) REFERENCES therapists (id)
           )
         ''');
       },
-      version: 1,
+      onUpgrade: (db, oldVersion, newVersion) async{
+        if(oldVersion < 3){
+          await db.execute('ALTER TABLE appointments ADD COLUMN slotTime TEXT NOT NULL DEFAULT ""');
+          print("Database Upgraded: Added slotTime to appointments");
+        }
+      },
+      version: 3,
     );
     return db;
   }

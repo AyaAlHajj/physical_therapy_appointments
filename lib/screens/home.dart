@@ -1,7 +1,7 @@
 import 'package:concentric_transition/concentric_transition.dart';
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/screens/authentications/login.dart';
 import 'package:physical_therapy_appointments/widgets/welcomeview.dart';
-import 'login.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

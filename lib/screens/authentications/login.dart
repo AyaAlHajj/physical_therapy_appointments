@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/dashboards/therapist_dashboard.dart';
 import 'package:physical_therapy_appointments/db/therapy_storage.dart';
-import 'package:physical_therapy_appointments/models/wounded.dart';
-import 'package:physical_therapy_appointments/screens/therapist_dashboard.dart';
-import 'package:physical_therapy_appointments/screens/wounded_dashboard.dart';
-import 'package:physical_therapy_appointments/screens/signup.dart';
+import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
+import 'package:physical_therapy_appointments/screens/authentications/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -26,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       final pref = await SharedPreferences.getInstance();
       await pref.setBool('isLoggedIn', true);
-      await pref.setInt('id', user.id ?? 0);
+      await pref.setInt('woundedId', user.id);
       await pref.setString('email', user.email);
 
       String role = user.role ?? 'wounded';
@@ -45,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
         context, 
         MaterialPageRoute(
-          builder: (ctx) => const WondedDashboard(),
+          builder: (ctx) => AppointmentListScreen(currentUserId: user.id),
         )
       );
       }

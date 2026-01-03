@@ -3,16 +3,58 @@ import 'package:physical_therapy_appointments/models/appointment.dart';
 import 'package:physical_therapy_appointments/models/therapist.dart';
 import 'package:physical_therapy_appointments/models/therapist_slots.dart';
 import 'package:physical_therapy_appointments/models/wounded.dart';
+import 'package:sqflite/sqflite.dart';
 
+//---------------- Save Appointment --------------//
+Future<void> saveAppointment(Appointment appointment) async{
+  final db = await TherapyDatabase().getDatabase();
+
+  await db.insert('appointments', {
+    'woundedId': appointment.woundedId,
+    'therapistId': appointment.therapistId,
+    'date': appointment.date,
+    'slotTime': appointment.slotTime,
+  });
+}
+
+//---------------- Therapists Schedule -----------//
+Future<void> therapistSchedule(int therapistId) async{
+  final db = await TherapyDatabase().getDatabase();
+  List<int> workingDays = [0, 1, 2, 3, 4];
+  List<String> times = [
+    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', 
+    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'
+  ];
+
+  Batch batch = db.batch();
+  for(int day in workingDays){
+    for(String time in times){
+      batch.insert('therapist_slots', {
+        'therapistId': therapistId,
+        'dayOfWeek' : day,
+        'slotTime' : time,
+      });
+    }
+  }
+  await batch.commit(noResult: true);
+}
+
+//---------------- Therapists Slots --------------//
+Future<void> slots(int therapistId, int dayIndex, String time) async{
+  TherapyDatabase database = TherapyDatabase();
+  final db = await database.getDatabase();
+
+  await db.insert('therapist_slots', {
+    'therapistId' : therapistId,
+    'dayOfWeek' : dayIndex,
+    'slotTime' : time,
+  });
+}
+  
 // --------------- User Login --------------------//
 Future<dynamic> loginUser(String email, String password) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-
-  final allWounded = await db.query('wounded');
-  final allTherapists = await db.query('therapists');
-  print("DEBUG: Wounded in DB: $allWounded");
-  print("DEBUG: Therapists in DB: $allTherapists");
 
   final woundedResult = await db.query(
     'wounded',
@@ -57,7 +99,7 @@ Future<bool> doesUserExist(String email) async {
 
 
 // --------------- Sign Up --------------------//
-Future<String> signUP({
+Future<dynamic> signUP({
   required String firstname,
   required String surname,
   required String email,
@@ -87,8 +129,8 @@ Future<String> signUP({
     data['info'] = info;
   }
   
-  await db.insert(table, data);
-  return 'success';
+  int id = await db.insert(table, data);
+  return id;
 }
 
 
@@ -97,7 +139,7 @@ Future<String> signUP({
 Future<void> insertTherapist(Therapist therapist) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  db.insert('therapists', therapist.getTherapistMap());
+  db.insert('therapists', therapist.toMap());
 }
 
 Future<List<Therapist>> loadTherapists() async {
@@ -130,7 +172,7 @@ Future<Therapist?> getTherapistbyId(int therapistId) async {
 Future<void> insertWounded(Wounded wounded) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  db.insert('wounded', wounded.getWoundedMap());
+  db.insert('wounded', wounded.toMap());
 }
 
 Future<List<Wounded>> loadWounded() async {
@@ -214,18 +256,18 @@ Future<List<TherapistSlots>> loadSlotsByDay(int therapistId, int dayOfWeek) asyn
 }
 //------------------ Appointments Table -------------------------//:
 
-Future<void> insertAppointment(Appointments appointment) async {
+Future<void> insertAppointment(Appointment appointment) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  db.insert('appointments', appointment.getAppointmentMap());
+  db.insert('appointments', appointment.toMap());
 }
 
-Future<List<Appointments>> loadAppointments() async {
+Future<List<Appointment>> loadAppointments() async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
   final result = await db.query('appointments');
-  List<Appointments> resultList = result.map((row) {
-    return Appointments.fromMap(row);
+  List<Appointment> resultList = result.map((row) {
+    return Appointment.fromMap(row);
   }).toList();
   return resultList;
 }
@@ -236,23 +278,23 @@ Future<void> deleteAppointment(int appointmentId) async {
   db.delete('appointments', where: 'id = ?', whereArgs: [appointmentId]);
 }
 
-Future<Appointments?> getAppointmentById(int appointmentId) async {
+Future<Appointment?> getAppointmentById(int appointmentId) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
   final result = await db
       .query('appointments', where: 'id = ?', whereArgs: [appointmentId]);
   if (result.isEmpty) return null;
-  return Appointments.fromMap(result.first);
+  return Appointment.fromMap(result.first);
 }
 
-Future<void> updateAppointment(Appointments appointment) async {
+Future<void> updateAppointment(Appointment appointment) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  db.update('appointments', appointment.getAppointmentMap(),
+  db.update('appointments', appointment.toMap(),
       where: 'id = ?', whereArgs: [appointment.id]);
 }
 
-Future<List<Appointments>> loadAppointmentsByWounded(int woundedId) async {
+Future<List<Appointment>> loadAppointmentsByWounded(int woundedId) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
 
@@ -261,12 +303,12 @@ Future<List<Appointments>> loadAppointmentsByWounded(int woundedId) async {
     where: 'woundedId = ?',
     whereArgs: [woundedId],
   );
-  List<Appointments> appointments = result.map((row) {
-    return Appointments.fromMap(row);
+  List<Appointment> appointments = result.map((row) {
+    return Appointment.fromMap(row);
   }).toList();
   return appointments;
 }
-Future<List<Appointments>> getAppointmentsByTherapistAndDate(
+Future<List<Appointment>> getAppointmentsByTherapistAndDate(
   int therapistId,
   String date,
 ) async {
@@ -279,9 +321,9 @@ Future<List<Appointments>> getAppointmentsByTherapistAndDate(
     whereArgs: [therapistId, date],
   );
 
-  return result.map((row) => Appointments.fromMap(row)).toList();
+  return result.map((row) => Appointment.fromMap(row)).toList();
 }
-Future<List<Appointments>> loadAppointmentsByTherapist(int therapistId) async {
+Future<List<Appointment>> loadAppointmentsByTherapist(int therapistId) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
   final result = await db.query(
@@ -290,5 +332,5 @@ Future<List<Appointments>> loadAppointmentsByTherapist(int therapistId) async {
     whereArgs: [therapistId],
   );
   
-  return result.map((row) => Appointments.fromMap(row)).toList();
+  return result.map((row) => Appointment.fromMap(row)).toList();
 }
