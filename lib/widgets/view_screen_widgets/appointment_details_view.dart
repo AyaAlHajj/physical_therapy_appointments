@@ -9,8 +9,8 @@ class AppointmentDetailsView extends StatelessWidget {
   final Appointment appointment;
   final Wounded wounded;
   final Therapist therapist;
-  final VoidCallbackAction handleDelete;
-  final VoidCallbackAction handleEdit;
+  final VoidCallback handleDelete;
+  final VoidCallback handleEdit;
 
 
   const AppointmentDetailsView({
@@ -33,11 +33,13 @@ class AppointmentDetailsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           const SizedBox(height: 20),
+
           AppointmentsDetailsCard(
             woundedName: woundedName,
             therapistName: therapistName,
-            date: formatDate(appointment!.date),
+            date: formatDate(appointment.date),
             time: appointment.slotTime,
           ),
 
@@ -47,7 +49,7 @@ class AppointmentDetailsView extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: null,
+                  onPressed: handleEdit,
                   icon: const Icon(Icons.edit),
                   label: const Text("Edit"),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
@@ -56,7 +58,7 @@ class AppointmentDetailsView extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: null,
+                  onPressed: handleDelete,
                   icon: const Icon(Icons.delete),
                   label: const Text("Delete"),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),

@@ -5,6 +5,9 @@ import 'package:physical_therapy_appointments/models/therapist_slots.dart';
 import 'package:physical_therapy_appointments/models/wounded.dart';
 import 'package:sqflite/sqflite.dart';
 
+
+
+
 //---------------- Save Appointment --------------//
 Future<void> saveAppointment(Appointment appointment) async{
   final db = await TherapyDatabase().getDatabase();
@@ -308,6 +311,7 @@ Future<List<Appointment>> loadAppointmentsByWounded(int woundedId) async {
   }).toList();
   return appointments;
 }
+
 Future<List<Appointment>> getAppointmentsByTherapistAndDate(
   int therapistId,
   String date,
@@ -323,6 +327,7 @@ Future<List<Appointment>> getAppointmentsByTherapistAndDate(
 
   return result.map((row) => Appointment.fromMap(row)).toList();
 }
+
 Future<List<Appointment>> loadAppointmentsByTherapist(int therapistId) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();

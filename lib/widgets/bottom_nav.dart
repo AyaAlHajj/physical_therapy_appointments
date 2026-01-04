@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/models/therapist.dart';
 import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
+import 'package:physical_therapy_appointments/screens/therapists_details.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
-  const BottomNav({Key?key,required this.currentIndex}):super(key:key);
+  final List<Therapist?> therapists;
+
+  const BottomNav({Key?key,
+  required this.currentIndex,
+  required this.therapists,
+  }):super(key:key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,20 +27,29 @@ class BottomNav extends StatelessWidget {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => AppointmentListScreen(currentUserId: 0),
+              builder: (context) => const AppointmentListScreen(currentUserId: 0),
             )
           );
         } 
         
         else {
+          if (therapists.isNotEmpty && therapists[0] != null) {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => AppointmentListScreen(currentUserId: 0),
+              builder: (context) => TherapistDetailsScreen(therapist: therapists[0]!),
             )
           );
+          }
+
+          else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No therapists available')),
+            );
+          }
         }
-      },
+
+    },
   
 
 items: const [

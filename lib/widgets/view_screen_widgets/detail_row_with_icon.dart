@@ -15,7 +15,7 @@ class DetailRowWithIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 24, color: Colors.grey),
+        Icon(icon, size: 24, color: const Color.fromARGB(255, 155, 40, 40)),
         const SizedBox(width: 12),
         Text(
           label,

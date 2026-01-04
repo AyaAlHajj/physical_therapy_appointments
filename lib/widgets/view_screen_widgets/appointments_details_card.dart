@@ -25,23 +25,31 @@ class AppointmentsDetailsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white),
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           DetailRow(label: 'Wounded Name: ', value: woundedName),
-          const Divider(height: 30),
+          
+          const SizedBox(height: 30),
+
           DetailRowWithIcon(
             icon: Icons.calendar_today,
             label: 'Date:',
             value: date,
           ),
-          const Divider(height: 30),
+
+          const SizedBox(height: 30),
+
           DetailRowWithIcon(
             icon: Icons.person,
             label: 'Therapist:',
             value: therapistName,
           ),
-          const Divider(height: 30),
+
+          const SizedBox(height: 30),
+
           DetailRowWithIcon(
             icon: Icons.access_time,
             label: 'Time:',

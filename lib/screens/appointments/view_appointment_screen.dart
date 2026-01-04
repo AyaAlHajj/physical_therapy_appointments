@@ -3,7 +3,9 @@ import 'package:physical_therapy_appointments/db/therapy_storage.dart';
 import 'package:physical_therapy_appointments/models/appointment.dart';
 import 'package:physical_therapy_appointments/models/therapist.dart';
 import 'package:physical_therapy_appointments/models/wounded.dart';
+import 'package:physical_therapy_appointments/screens/appointments/edit_appointment.dart';
 import 'package:physical_therapy_appointments/widgets/bottom_nav.dart';
+import 'package:physical_therapy_appointments/widgets/view_screen_widgets/appointment_details_view.dart';
 
 class ViewAppointmentScreen extends StatefulWidget {
   final int appointmentId;
@@ -93,11 +95,33 @@ class _ViewAppointmentScreenState extends State<ViewAppointmentScreen> {
         ),
         centerTitle: true,
       ),
-      //body: isLoading
-        //  ? const Center(child: CircularProgressIndicator())
-          //: appointment == null
-            //  ? const Center(child: Text('Appointment not found'))
-              //: AppointmentDetailsView(handleDelete: handleDelete, handleEdit: ,),
+      
+      body: isLoading
+         ? const Center(child: CircularProgressIndicator())
+          : appointment == null
+             ? const Center(child: Text('Appointment not found'))
+              : AppointmentDetailsView(
+                appointment:appointment!,
+                wounded :wounded!,
+                therapist:therapist!,
+                handleDelete: handleDelete,
+                handleEdit:() async {
+                  final result = await Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => EditAppointmentScreen(
+                                      appointment: appointment!
+                                      ),
+                                    ),
+                  );
+                
+
+              if(result == true){
+                await loadAppointmentsDetails();
+              }
+      
+              } ,
+                ),
       bottomNavigationBar: const BottomNav(currentIndex: 1),
     );
   }

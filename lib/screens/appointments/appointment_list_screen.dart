@@ -79,22 +79,28 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
                         padding: const EdgeInsets.all(16),
                         itemCount: appointments.length,
                         itemBuilder: (context, index) {
+
                           final appointment = appointments[index];
-                          final therapist =
-                              therapistsCache[appointment.therapistId];
+
+                          final therapist = therapistsCache[appointment.therapistId];
+                          
                           return AppointmentListItem(
                             appointment: appointment,
                             therapist: therapist,
                             formattedDate: formatDate(appointment.date),
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async{
+                              final result = await Navigator.push(
                                   context, 
                                   MaterialPageRoute(
-                                    builder: (context)=>ViewAppointmentScreen(
+                                    builder: (context) => ViewAppointmentScreen(
                                       appointmentId: appointment.id!
                                       ),
                                     ),
                                     );
+
+                                    if(result == true){
+                                      loadAppointmentsData();
+                                    }
                             },
                           );
                         },

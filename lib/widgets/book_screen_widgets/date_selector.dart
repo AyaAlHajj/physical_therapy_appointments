@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:physical_therapy_appointments/widgets/appointment_list_item.dart';
 
 class DateSelector extends StatelessWidget {
   final List<int> availableDates;
@@ -23,7 +24,7 @@ class DateSelector extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<int>(
           isExpanded: true,
-          value: selectedDate,
+          value: availableDates.contains(selectedDate) ? selectedDate : null,
           hint: const Row(
             children: [
               Icon(Icons.calendar_today, color: Color.fromARGB(255, 155, 40, 40),),
@@ -54,8 +55,4 @@ class DateSelector extends StatelessWidget {
     );
   }
 }
-  String formatDate(int dateMillis) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(dateMillis);
-    return '${date.day}/${date.month}/${date.year}';
-  }
 
