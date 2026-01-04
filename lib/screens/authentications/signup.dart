@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:physical_therapy_appointments/dashboards/therapist_dashboard.dart';
+import 'package:physical_therapy_appointments/screens/dashboards/therapist_dashboard.dart';
 import 'package:physical_therapy_appointments/db/therapy_storage.dart';
-import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
+import 'package:physical_therapy_appointments/screens/dashboards/wounded_dashboard.dart';
 import 'package:physical_therapy_appointments/widgets/forms/therapist_form.dart';
 import 'package:physical_therapy_appointments/widgets/forms/wounded_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,17 +45,22 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        backgroundColor: const Color.fromARGB(255, 155, 40, 40),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "Sign Up",
+          style:
+              TextStyle(color: Colors.white, fontSize: 20),
+        ),
       ),
 
       body: SingleChildScrollView(
         child: Column(
             children: [
-            const Text('Who are you?'),
-
             ListTile(
               title: const Text('Therapist'),
               leading: Radio(
+                activeColor: const Color.fromARGB(255, 116, 150, 142),
                 value: 1, 
                 groupValue: selectedOption, 
                 onChanged: (value){
@@ -69,6 +74,7 @@ class _SignUpState extends State<SignUp> {
             ListTile(
               title: const Text('Wounded'),
               leading: Radio(
+                activeColor: const Color.fromARGB(255, 116, 150, 142),
                 value: 2, 
                 groupValue: selectedOption, 
                 onChanged: (value){
@@ -96,7 +102,7 @@ class _SignUpState extends State<SignUp> {
                 surnameController: _surnameController,
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               ElevatedButton(
                 onPressed: () async{
@@ -142,7 +148,7 @@ class _SignUpState extends State<SignUp> {
                       Navigator.push( 
                         context, 
                         MaterialPageRoute(
-                          builder: (ctx) =>  const TherapistDashboard(),
+                          builder: (ctx) =>  TherapistDashboard(therapistId: result,),
                         )
                       );
                     }
@@ -152,7 +158,7 @@ class _SignUpState extends State<SignUp> {
                       Navigator.push(
                         context, 
                         MaterialPageRoute(
-                          builder: (ctx) => AppointmentListScreen(currentUserId: result),
+                          builder: (ctx) => WoundedDashboard(currentUserId: result),
                         )
                       );
                     }
@@ -176,7 +182,7 @@ class _SignUpState extends State<SignUp> {
                 },
 
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 116, 150, 142),
+                  backgroundColor: const Color.fromARGB(255, 155, 40, 40),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Submit'),

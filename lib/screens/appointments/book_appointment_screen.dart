@@ -84,16 +84,13 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
     final dateTime = DateTime.fromMillisecondsSinceEpoch(dateMillis);
     final weekday = dateTime.weekday - 1;
-    final slots = await loadSlotsByDay(selectedTherapist!.id!, weekday);
 
+    final slots = await loadSlotsByDay(selectedTherapist!.id!, weekday);
     List<String> allTimes = slots.map((slot) => slot.slotTime).toList();
-    final dateString = DateTime.fromMillisecondsSinceEpoch(dateMillis)
-        .toIso8601String()
-        .split('T')[0];
-    List<Appointment> bookedAppointments =
-        await getAppointmentsByTherapistAndDate(
+
+    List<Appointment> bookedAppointments = await getAppointmentsByTherapistAndDate(
       selectedTherapist!.id!,
-      dateString,
+      dateMillis,
     );
 
     List<String> bookedTimes =
@@ -130,12 +127,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       slotTime: selectedTime!,
     );
 
-    insertAppointment(newAppointment);
+    await saveAppointment(newAppointment);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Appointment booked successfully!'),
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: Color.fromARGB(255, 116, 150, 142),
       ),
     );
 
@@ -149,7 +146,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 155, 40, 40),
         leading: IconButton(
@@ -166,17 +163,22 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
         ),
         centerTitle: true,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          
           children: [
             const SizedBox(height: 30),
 
             // Select Therapist
             const Text('Choose Therapist:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
             const SizedBox(height: 12),
+
             isLoadingTherapists
                 ? const Center(child: CircularProgressIndicator())
                 : TherapistDropdown(
@@ -187,17 +189,23 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
             //Select date:
             const SizedBox(height: 30),
+
             const Text('Choose Date:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            
             const SizedBox(height: 12),
+
             if (selectedTherapist == null)
               const Text('Please select a therapist first',
                   style: TextStyle(color: Colors.grey))
+
             else if (isLoadingDates)
               const Center(child: CircularProgressIndicator())
+
             else if (availableDates.isEmpty)
               const Text('No available dates',
                   style: TextStyle(color: Colors.red))
+
             else
               DateSelector(
                   availableDates: availableDates,
@@ -234,7 +242,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 116, 150, 142),
+                        backgroundColor: const Color.fromARGB(255, 155, 40, 40),
                       ),
                       onPressed: () => Navigator.pop(context), 
                       child: const Text(
@@ -249,8 +257,8 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 116, 150, 142),
-                        disabledBackgroundColor: const Color.fromARGB(255, 116, 150, 142),
+                        backgroundColor: const Color.fromARGB(255, 155, 40, 40),
+                        disabledBackgroundColor: const Color.fromARGB(255, 155, 40, 40),
                       ),
                       onPressed: (selectedTherapist != null &&
                               selectedDate != null &&
@@ -270,7 +278,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNav(currentIndex: 1),
+      bottomNavigationBar: const BottomNav(currentIndex: 0),
     );
   } 
 }

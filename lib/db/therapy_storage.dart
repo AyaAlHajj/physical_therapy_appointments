@@ -5,12 +5,32 @@ import 'package:physical_therapy_appointments/models/therapist_slots.dart';
 import 'package:physical_therapy_appointments/models/wounded.dart';
 import 'package:sqflite/sqflite.dart';
 
+Future<bool> isSlotAvailable(int therapistId, int date, String slotTime) async {
+  final db = await TherapyDatabase().getDatabase();
+  
+  final result = await db.query(
+    'appointments',
+    where: 'therapistId = ? AND date = ? AND slotTime = ?',
+    whereArgs: [therapistId, date, slotTime],
+  );
 
-
+   return result.isEmpty;
+}
 
 //---------------- Save Appointment --------------//
 Future<void> saveAppointment(Appointment appointment) async{
   final db = await TherapyDatabase().getDatabase();
+  
+  bool available = await isSlotAvailable(
+    appointment.therapistId, 
+    appointment.date, 
+    appointment.slotTime
+  );
+
+  if(!available){
+    print( "This slot is booked by someone else!");
+    return;
+  }
 
   await db.insert('appointments', {
     'woundedId': appointment.woundedId,
@@ -148,10 +168,16 @@ Future<void> insertTherapist(Therapist therapist) async {
 Future<List<Therapist>> loadTherapists() async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  final result = await db.query('therapists');
+  final result = await db.rawQuery('''
+    SELECT DISTINCT t.* FROM therapists t
+    INNER JOIN therapist_slots s ON t.id = s.therapistId
+    WHERE t.firstname IS NOT NULL AND t.firstname != ""
+  ''');
+
   List<Therapist> resultList = result.map((row) {
     return Therapist.fromMap(row);
   }).toList();
+  
   return resultList;
 }
 
@@ -165,8 +191,14 @@ Future<Therapist?> getTherapistbyId(int therapistId) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
   final result =
-      await db.query('therapists', where: 'id=?', whereArgs: [therapistId]);
+      await db.query(
+        'therapists', 
+        where: 'id = ? AND firstname != ""',
+        whereArgs: [therapistId]
+      );
+
   if (result.isEmpty) return null;
+
   return Therapist.fromMap(result.first);
 }
 
@@ -314,7 +346,7 @@ Future<List<Appointment>> loadAppointmentsByWounded(int woundedId) async {
 
 Future<List<Appointment>> getAppointmentsByTherapistAndDate(
   int therapistId,
-  String date,
+  int date,
 ) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();

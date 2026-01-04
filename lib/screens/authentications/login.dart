@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:physical_therapy_appointments/dashboards/therapist_dashboard.dart';
+import 'package:physical_therapy_appointments/screens/dashboards/therapist_dashboard.dart';
 import 'package:physical_therapy_appointments/db/therapy_storage.dart';
-import 'package:physical_therapy_appointments/screens/appointments/appointment_list_screen.dart';
+import 'package:physical_therapy_appointments/screens/dashboards/wounded_dashboard.dart';
 import 'package:physical_therapy_appointments/screens/authentications/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       final pref = await SharedPreferences.getInstance();
       await pref.setBool('isLoggedIn', true);
-      await pref.setInt('woundedId', user.id);
+      await pref.setInt('userId', user.id);
       await pref.setString('email', user.email);
 
       String role = user.role ?? 'wounded';
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push( 
           context, 
           MaterialPageRoute(
-            builder: (ctx) =>  const TherapistDashboard(),
+            builder: (ctx) =>  TherapistDashboard(therapistId: user.id!,),
           )
         );
       }
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
         context, 
         MaterialPageRoute(
-          builder: (ctx) => AppointmentListScreen(currentUserId: user.id),
+          builder: (ctx) => WoundedDashboard(currentUserId: user.id!),
         )
       );
       }
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: _handleLogin,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: green,
+                  backgroundColor: const Color.fromARGB(255, 155, 40, 40),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Submit'),

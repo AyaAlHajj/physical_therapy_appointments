@@ -10,12 +10,15 @@ class MainDrawer extends StatelessWidget {
       backgroundColor: Colors.white,
         child: Column(
           children: [
+
             const SizedBox(
               width: double.infinity,
+
               child: DrawerHeader(
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 155, 40, 40),
                 ),
+
                 child: Text(
                   'Menu',
                   style: TextStyle(
@@ -25,11 +28,15 @@ class MainDrawer extends StatelessWidget {
                 ),
               ),
             ),
+
+            //const Spacer(),
+
             ListTile(
               leading: const Icon(
                 Icons.logout,
                 color: Color.fromARGB(255, 155, 40, 40),
               ),
+
               title: const Text('Sign Out'),
               onTap: () {
                 Navigator.pop(context);

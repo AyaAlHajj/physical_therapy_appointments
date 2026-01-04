@@ -52,16 +52,22 @@ class AppointmentDetailsView extends StatelessWidget {
                   onPressed: handleEdit,
                   icon: const Icon(Icons.edit),
                   label: const Text("Edit"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 155, 40, 40), 
+                    foregroundColor: Colors.white),
                 ),
               ),
+
               const SizedBox(width: 10),
+
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: handleDelete,
                   icon: const Icon(Icons.delete),
                   label: const Text("Delete"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 155, 40, 40), 
+                  foregroundColor: Colors.white),
                 ),
               ),
             ],

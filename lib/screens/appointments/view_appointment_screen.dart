@@ -61,12 +61,13 @@ class _ViewAppointmentScreenState extends State<ViewAppointmentScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel',
+                  style: TextStyle(color: Color.fromARGB(255, 116, 150, 142))),
                 ),
                 TextButton(
                     onPressed: () => Navigator.pop(context, true),
                     child: const Text('Delete',
-                        style: TextStyle(color: Colors.red))),
+                        style: TextStyle(color: Color.fromARGB(255, 155, 40, 40)))),
               ],
             ));
     if (confirm == true) {
@@ -78,7 +79,7 @@ class _ViewAppointmentScreenState extends State<ViewAppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 155, 40, 40),
         leading: IconButton(
@@ -122,7 +123,7 @@ class _ViewAppointmentScreenState extends State<ViewAppointmentScreen> {
       
               } ,
                 ),
-      bottomNavigationBar: const BottomNav(currentIndex: 1),
+      bottomNavigationBar: const BottomNav(currentIndex: 0),
     );
   }
     

@@ -106,22 +106,22 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
 
     final allTimes = slots.map((s) => s.slotTime).toList();
 
-    final dateString = DateTime.fromMillisecondsSinceEpoch(dateMillis)
-        .toIso8601String()
-        .split('T')[0];
-
-    final bookedAppointments =
-        await getAppointmentsByTherapistAndDate(
-      selectedTherapist!.id!,
-      dateString,
-    );
+    final bookedAppointments = await getAppointmentsByTherapistAndDate(
+    selectedTherapist!.id!,
+    dateMillis,
+  );
 
     final bookedTimes =
         bookedAppointments.map((a) => a.slotTime).toList();
 
     setState(() {
-      availableTimes =
-          allTimes.where((t) => !bookedTimes.contains(t)).toList();
+      availableTimes = allTimes.where((t) {
+      bool isBookedBySomeoneElse = bookedTimes.contains(t);
+      bool isMyCurrentSlot = (dateMillis == widget.appointment.date && t == widget.appointment.slotTime);
+      
+      return !isBookedBySomeoneElse || isMyCurrentSlot;
+    }).toList();
+    
       isLoadingTimes = false;
     });
   }
@@ -142,7 +142,7 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Appointment updated successfully'),
-        backgroundColor: Colors.green,
+        backgroundColor: Color.fromARGB(255, 116, 150, 142),
       ),
     );
 
@@ -152,20 +152,24 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8EAF6),
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 116, 150, 142),
+        backgroundColor: const Color.fromARGB(255, 155, 40, 40),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(
+            Icons.arrow_back, 
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Edit Appointment',
-          style: TextStyle(
-              color: Color.fromARGB(255, 155, 40, 40), fontSize: 20),
+          style:
+              TextStyle(color: Colors.white, fontSize: 20),
         ),
         centerTitle: true,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -212,31 +216,44 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
 
             const SizedBox(height: 40),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 155, 40, 40),
+                      ),
+                      onPressed: () => Navigator.pop(context), 
+                      child: const Text(
+                        'Cancel', 
+                        style: TextStyle(
+                          color: Colors.white
+                          ),
+                          ),
+                    ),
+
+                    const SizedBox(width: 10,),
+
+                     ElevatedButton(
                 onPressed: () => handleUpdate(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      const Color.fromARGB(255, 116, 150, 142),
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      const Color.fromARGB(255, 155, 40, 40),
                 ),
                 child: const Text(
                   'Save',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 155, 40, 40),
-                  ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                        ),
                 ),
               ),
+                  ],
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNav(currentIndex: 1, therapists: therapists,),
+      bottomNavigationBar: BottomNav(currentIndex: 0, therapists: therapists,),
     );
   }
 }

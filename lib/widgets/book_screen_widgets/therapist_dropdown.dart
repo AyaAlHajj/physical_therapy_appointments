@@ -21,17 +21,19 @@ class TherapistDropdown extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300),
       ),
+
       child: DropdownButtonHideUnderline(
         child: DropdownButton<Therapist>(
             isExpanded: true,
             value: selectedTherapist,
             hint: const Row(
               children: [
-                Icon(Icons.person_outline, color: Colors.grey),
+                Icon(Icons.person_outline, color: Color.fromARGB(255, 155, 40, 40)),
                 SizedBox(width: 12),
                 Text('Select a therapist'),
               ],
             ),
+
             items: therapists.map((therapist) {
               return DropdownMenuItem<Therapist>(
                 value: therapist,
