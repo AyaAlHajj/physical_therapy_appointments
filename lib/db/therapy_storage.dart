@@ -7,11 +7,12 @@ import 'package:sqflite/sqflite.dart';
 
 Future<bool> isSlotAvailable(int therapistId, int date, String slotTime) async {
   final db = await TherapyDatabase().getDatabase();
+  String cleanTime = slotTime.trim().toLowerCase();
   
   final result = await db.query(
     'appointments',
-    where: 'therapistId = ? AND date = ? AND slotTime = ?',
-    whereArgs: [therapistId, date, slotTime],
+    where: 'therapistId = ? AND date = ? AND LOWER(TRIM(slotTime)) = ?',
+    whereArgs: [therapistId, date, cleanTime],
   );
 
    return result.isEmpty;
@@ -327,7 +328,16 @@ Future<Appointment?> getAppointmentById(int appointmentId) async {
 Future<void> updateAppointment(Appointment appointment) async {
   TherapyDatabase database = TherapyDatabase();
   final db = await database.getDatabase();
-  db.update('appointments', appointment.toMap(),
+
+  DateTime rawDate = DateTime.fromMillisecondsSinceEpoch(appointment.date);
+  int cleanDate = DateTime(rawDate.year, rawDate.month, rawDate.day).millisecondsSinceEpoch;
+
+  db.update('appointments', {
+      'woundedId': appointment.woundedId,
+      'therapistId': appointment.therapistId,
+      'date': cleanDate,
+      'slotTime': appointment.slotTime,
+    },
       where: 'id = ?', whereArgs: [appointment.id]);
 }
 

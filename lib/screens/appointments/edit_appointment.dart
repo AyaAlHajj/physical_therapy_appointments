@@ -77,10 +77,11 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
 
     for (int i = 0; i < 30; i++) {
       DateTime date = today.add(Duration(days: i));
+      DateTime midnightDate = DateTime(date.year, date.month, date.day);
       int weekday = date.weekday - 1;
 
       if (daysOfWeek.contains(weekday)) {
-        dates.add(date.millisecondsSinceEpoch);
+        dates.add(midnightDate.millisecondsSinceEpoch);
       }
     }
 
@@ -115,15 +116,27 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
         bookedAppointments.map((a) => a.slotTime).toList();
 
     setState(() {
-      availableTimes = allTimes.where((t) {
-      bool isBookedBySomeoneElse = bookedTimes.contains(t);
-      bool isMyCurrentSlot = (dateMillis == widget.appointment.date && t == widget.appointment.slotTime);
-      
-      return !isBookedBySomeoneElse || isMyCurrentSlot;
+
+    final blockedByOthers = bookedAppointments
+      .where((a) => a.id != widget.appointment.id) 
+      .map((a) => a.slotTime.trim().toLowerCase())
+      .toSet();
+
+    availableTimes = allTimes.where((t) {
+      return !blockedByOthers.contains(t.trim().toLowerCase());
     }).toList();
+
+    String originalTime = widget.appointment.slotTime.trim().toLowerCase();
+    bool isSameDate = (dateMillis == widget.appointment.date);
+    bool isAlreadyInList = availableTimes.any((t) => t.trim().toLowerCase() == originalTime);
+
+    if (isSameDate && !isAlreadyInList) {
+      availableTimes.add(widget.appointment.slotTime);
+    }
     
       isLoadingTimes = false;
     });
+    
   }
 
   Future<void> handleUpdate() async {

@@ -103,8 +103,11 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
     ...myBookings.map((apt) => apt.slotTime.trim().toLowerCase()),
   };
 
-    List<String> available =
-        allTimes.where((time) => !forbiddenTimes.contains(time.trim().toLowerCase())).toList();
+    List<String> available = allTimes.where((time) {
+      String cleanSlot = time.trim().toLowerCase();
+      bool isForbidden = forbiddenTimes.contains(cleanSlot);
+      return !isForbidden;
+    }).toList();
 
     setState(() {
       availableTimes = available;
