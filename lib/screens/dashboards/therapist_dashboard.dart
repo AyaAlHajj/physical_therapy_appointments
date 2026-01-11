@@ -59,7 +59,7 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
 
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 155, 40, 40),
-        
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Your Appointments",
 

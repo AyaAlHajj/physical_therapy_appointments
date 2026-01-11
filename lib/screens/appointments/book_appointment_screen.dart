@@ -60,12 +60,11 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
     for (int i = 0; i < 30; i++) {
       DateTime date = today.add(Duration(days: i));
+      DateTime midnightDate = DateTime(date.year, date.month, date.day);
       int dayOfWeek = date.weekday - 1;
 
       if (daysOfWeek.contains(dayOfWeek)) {
-        String datestr =
-            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-        dates.add(date.millisecondsSinceEpoch);
+        dates.add(midnightDate.millisecondsSinceEpoch);
       }
     }
     setState(() {
@@ -93,11 +92,19 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       dateMillis,
     );
 
-    List<String> bookedTimes =
-        bookedAppointments.map((apt) => apt.slotTime).toList();
+    List<Appointment> myBookings = await getAppointmentsByWoundedAndDate(
+    widget.currentUserId,
+    dateMillis,
+  );
+
+
+  Set<String> forbiddenTimes = {
+    ...bookedAppointments.map((apt) => apt.slotTime.trim().toLowerCase()),
+    ...myBookings.map((apt) => apt.slotTime.trim().toLowerCase()),
+  };
 
     List<String> available =
-        allTimes.where((time) => !bookedTimes.contains(time)).toList();
+        allTimes.where((time) => !forbiddenTimes.contains(time.trim().toLowerCase())).toList();
 
     setState(() {
       availableTimes = available;
@@ -216,15 +223,20 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
             const SizedBox(height: 30),
             const Text('Choose Time:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
             const SizedBox(height: 12),
+
             if (selectedDate == null)
               const Text('Please select a date first',
                   style: TextStyle(color: Colors.grey))
+
             else if (isLoadingTimes)
               const Center(child: CircularProgressIndicator())
+
             else if (availableTimes.isEmpty)
-              const Text('No available times',
+              const Text('No available times! Fully Booked.',
                   style: TextStyle(color: Colors.red))
+
             else
               TimeSelector(
                   availableTimes: availableTimes,

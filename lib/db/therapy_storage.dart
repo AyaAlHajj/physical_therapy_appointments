@@ -20,10 +20,12 @@ Future<bool> isSlotAvailable(int therapistId, int date, String slotTime) async {
 //---------------- Save Appointment --------------//
 Future<void> saveAppointment(Appointment appointment) async{
   final db = await TherapyDatabase().getDatabase();
+  DateTime rawDate = DateTime.fromMillisecondsSinceEpoch(appointment.date);
+  int cleanDate = DateTime(rawDate.year, rawDate.month, rawDate.day).millisecondsSinceEpoch;
   
   bool available = await isSlotAvailable(
     appointment.therapistId, 
-    appointment.date, 
+    cleanDate, 
     appointment.slotTime
   );
 
@@ -35,7 +37,7 @@ Future<void> saveAppointment(Appointment appointment) async{
   await db.insert('appointments', {
     'woundedId': appointment.woundedId,
     'therapistId': appointment.therapistId,
-    'date': appointment.date,
+    'date': cleanDate,
     'slotTime': appointment.slotTime,
   });
 }
@@ -355,6 +357,23 @@ Future<List<Appointment>> getAppointmentsByTherapistAndDate(
     'appointments',
     where: 'therapistId = ? AND date = ?',
     whereArgs: [therapistId, date],
+  );
+
+  return result.map((row) => Appointment.fromMap(row)).toList();
+}
+
+
+Future<List<Appointment>> getAppointmentsByWoundedAndDate(
+  int woundedId,
+  int date,
+) async {
+  TherapyDatabase database = TherapyDatabase();
+  final db = await database.getDatabase();
+
+  final result = await db.query(
+    'appointments',
+    where: 'woundedId = ? AND date = ?',
+    whereArgs: [woundedId, date],
   );
 
   return result.map((row) => Appointment.fromMap(row)).toList();
