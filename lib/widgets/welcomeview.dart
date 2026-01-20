@@ -14,7 +14,7 @@ class WelcomeView extends StatelessWidget {
             const Spacer(flex: 2),
             Image.asset(
               'assets/images/logo.png',
-              width: 130,
+              width: 220,
             ),
 
             const SizedBox(height: 30),

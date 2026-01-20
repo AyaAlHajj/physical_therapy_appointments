@@ -152,6 +152,7 @@ class _SignUpState extends State<SignUp> {
                         )
                       );
                     }
+
                     else{
                       await pref.setInt('woundedId', result);
 
@@ -163,6 +164,7 @@ class _SignUpState extends State<SignUp> {
                       );
                     }
                   }
+                  
                     else {
                         showDialog(
                           context: context, 

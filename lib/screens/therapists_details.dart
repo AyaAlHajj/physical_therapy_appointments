@@ -82,6 +82,20 @@ class TherapistDetailsScreen extends StatelessWidget {
                     therapist.info,
                       style: const TextStyle(fontSize: 16, height: 1.5),
                   ),
+
+                  const SizedBox(height: 4),
+                  
+                  Text(
+                    "Email: ${therapist.email}",
+                      style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
+
+                  const SizedBox(height: 4),
+                  
+                  Text(
+                    "Phone Number: ${therapist.phone}",
+                      style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
                 ],
               ),
 
